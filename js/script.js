@@ -6,9 +6,9 @@ const presupuesto = {
 const gastos = [];
 
 const monedas = [
-  { id: 1, sym: "$", cotizacion: 1 },
-  { id: 2, sym: "U$S", cotizacion: 41.2 },
-  { id: 3, sym: "€", cotizacion: 45.8 },
+  { id: 1, sym: "$", nombre: "Pesos", cotizacion: 1 },
+  { id: 2, sym: "U$S", nombre: "Dólares", cotizacion: 41.2 },
+  { id: 3, sym: "€", nombre: "Euros", cotizacion: 45.8 },
 ];
 
 function redondear(num) {
@@ -16,16 +16,15 @@ function redondear(num) {
 }
 
 function validarNumero(valor) {
-  return !isNaN(valor) && parseFloat(valor) >= 0;
+  return !isNaN(valor) && parseFloat(valor) > 0;
 }
 
 function pedirImporte(msg) {
-  let numero = prompt(msg);
-  if (!validarNumero(numero)) {
-    do {
-      numero = prompt("Debe ingresar un numero valido");
-    } while (!validarNumero(numero));
-  }
+  let numero;
+  do {
+    numero = prompt(msg);
+    if (numero === null) return null;
+  } while (!validarNumero(numero));
   return redondear(parseFloat(numero));
 }
 
@@ -35,29 +34,27 @@ function monedaValida(moneda) {
 
 function pedirMoneda() {
   let monedaId;
+  let msg = "Seleccione la moneda:\n";
+  monedas.forEach((moneda) => {
+    msg += `${moneda.id} - ${moneda.sym} ${moneda.nombre}\n`;
+  });
   do {
-    monedaId = prompt(`Seleccione la moneda:
-        1 - $
-        2 - U$S`);
-    if (monedaId === null) {
-      return null;
-    }
+    monedaId = prompt(msg);
+    if (monedaId === null) return null;
   } while (!monedaValida(monedaId));
   return parseInt(monedaId);
 }
 
 function pedirPresupuesto() {
-  alert(
-    `Bienvenido al controlador de gastos. A continuación ingrese la moneda de su presupuesto inicial.`
-  );
   let monedaId = pedirMoneda();
-  if (monedaId) {
+  if (monedaId !== null) {
     let importe = pedirImporte(
       "Por favor ingrese su presupuesto para empezar."
     );
-    if (importe) {
+    if (importe !== null) {
       presupuesto.importe = importe;
       presupuesto.monedaId = monedaId;
+      alert(`Presupuesto cargado: ${buscarMoneda(monedaId).sym} ${importe}`);
     }
   }
 }
@@ -67,9 +64,6 @@ function buscarMoneda(monedaId) {
 }
 
 function convertirAMoneda(monedaIdOri, monedaIdDes, importe) {
-  console.log("monedaIdOri", monedaIdOri);
-  console.log("monedaIdDes", monedaIdDes);
-
   let monedaOri = buscarMoneda(monedaIdOri);
   let monedaDes = buscarMoneda(monedaIdDes);
   return redondear((importe * monedaOri.cotizacion) / monedaDes.cotizacion);
@@ -85,7 +79,7 @@ function calcularTotal(monedaIdDes) {
 
 function imprimirTotal() {
   let monedaIdDes = pedirMoneda();
-  if (monedaIdDes) {
+  if (monedaIdDes !== null) {
     let total = calcularTotal(monedaIdDes);
     alert(
       `El total de los gastos es de ${buscarMoneda(monedaIdDes).sym} ${total}`
@@ -94,89 +88,109 @@ function imprimirTotal() {
 }
 
 function imprimirGastos() {
-  console.log("ENTRE");
-  for (let i = 0; i < gastos.length; i++) {
-    console.log(
-      `${gastos[i].detalle} - ${buscarMoneda(gastos[i].monedaId).sym} ${
-        gastos[i].importe
-      }`
-    );
+  if (gastos.length === 0) {
+    alert("No hay gastos cargados.");
+    return;
   }
+
+  console.log("GASTOS:");
+  gastos.forEach((gasto) => {
+    console.log(
+      `${gasto.detalle} - ${buscarMoneda(gasto.monedaId).sym} ${gasto.importe}`
+    );
+  });
 }
 
 function agregarGasto() {
   let detalle = prompt("Ingrese un breve detalle de su gasto");
-  let monedaId = pedirMoneda();
-  let importe = pedirImporte("Ingrese cuanto gasto");
-
-  let gasto = {
-    detalle: detalle,
-    monedaId: monedaId,
-    importe: importe,
-  };
-
-  gastos.push(gasto);
+  if (detalle) {
+    let monedaId = pedirMoneda();
+    if (monedaId !== null) {
+      let importe = pedirImporte("Ingrese cuánto gastó");
+      if (importe !== null) {
+        gastos.push({ detalle, monedaId, importe });
+        alert("Gasto agregado correctamente.");
+      }
+    }
+  }
 }
 
 function calcularPresupuesto(monedaIdDes) {
-  return redondear(
-    convertirAMoneda(presupuesto.monedaId, monedaIdDes, presupuesto.importe) -
-      calcularTotal(monedaIdDes)
+  const importePresu = convertirAMoneda(
+    presupuesto.monedaId,
+    monedaIdDes,
+    presupuesto.importe
   );
+  return redondear(importePresu - calcularTotal(monedaIdDes));
 }
 
 function imprimirPresupuesto() {
-  let presupuestoCal = 0;
-  let monedaIdDes = pedirMoneda();
-  if (monedaIdDes) {
-    presupuestoCal = calcularPresupuesto(monedaIdDes);
+  if (presupuesto.importe === 0) {
+    alert("Aún no se ha definido un presupuesto inicial.");
+    return;
   }
-  alert(
-    `El presupuesto restante es de ${
-      buscarMoneda(monedaIdDes).sym
-    } ${presupuestoCal}`
-  );
+
+  let monedaIdDes = pedirMoneda();
+  if (monedaIdDes !== null) {
+    let presupuestoCal = calcularPresupuesto(monedaIdDes);
+    alert(
+      `El presupuesto restante es de ${
+        buscarMoneda(monedaIdDes).sym
+      } ${presupuestoCal}`
+    );
+  }
 }
 
 function pedirAccion() {
-  let accion = prompt(`Seleccione la acción que quiera:
-        1 - Agregar gasto
-        2 - Calcular presupuesto restante
-        3 - Calcular total gastado
-        4 - Imprimir gastos
-        5- Salir
-    `);
+  let salir = false;
+  while (!salir) {
+    let accion = prompt(`Seleccione la acción que quiera:
+1 - Cambiar presupuesto inicial
+2 - Agregar gasto
+3 - Calcular presupuesto restante
+4 - Calcular total gastado
+5 - Imprimir gastos
+6 - Salir`);
 
-  switch (parseInt(accion)) {
-    case 1:
-      agregarGasto();
-      pedirAccion();
-      break;
+    if (accion === null) {
+      salir = true;
+      continue;
+    }
 
-    case 2:
-      imprimirPresupuesto();
-      pedirAccion();
-      break;
+    switch (parseInt(accion)) {
+      case 1:
+        pedirPresupuesto();
+        break;
 
-    case 3:
-      imprimirTotal();
-      pedirAccion();
-      break;
+      case 2:
+        agregarGasto();
+        break;
 
-    case 4:
-      imprimirGastos();
-      pedirAccion();
+      case 3:
+        imprimirPresupuesto();
+        break;
 
-    case 5:
-      return;
+      case 4:
+        imprimirTotal();
+        break;
 
-    default:
-      pedirAccion();
-      break;
+      case 5:
+        imprimirGastos();
+        break;
+
+      case 6:
+        salir = true;
+        break;
+
+      default:
+        alert("Opción no válida.");
+        break;
+    }
   }
 }
 
 function main() {
+  alert(`Bienvenido al controlador de gastos.`);
   pedirPresupuesto();
   pedirAccion();
 }
