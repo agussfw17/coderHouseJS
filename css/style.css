@@ -1,0 +1,48 @@
+/* Fuente base y colores */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f4f6f8;
+  color: #333;
+}
+
+/* Contenedor principal */
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background: #fff;
+  padding: 30px 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+}
+
+/* Título */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 2em;
+}
+
+h1 i {
+  margin-right: 10px;
+  color: #27ae60;
+}
+
+/* Párrafo principal */
+p {
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+/* Lista de opciones (sin fondo ni hover) */
+.menu-opciones {
+  margin-top: 20px;
+  padding-left: 20px;
+}
+
+.menu-opciones li {
+  margin-bottom: 10px;
+  font-size: 1.05em;
+}

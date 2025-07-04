@@ -55,10 +55,13 @@ function pedirPresupuesto() {
       presupuesto.importe = importe;
       presupuesto.monedaId = monedaId;
       alert(`Presupuesto cargado: ${buscarMoneda(monedaId).sym} ${importe}`);
+    } else {
+      alert("No se ingresó un presupuesto. Acción cancelada.");
     }
+  } else {
+    alert("No se seleccionó una moneda. Acción cancelada.");
   }
 }
-
 function buscarMoneda(monedaId) {
   return monedas.find((moneda) => moneda.id === monedaId);
 }
@@ -84,6 +87,8 @@ function imprimirTotal() {
     alert(
       `El total de los gastos es de ${buscarMoneda(monedaIdDes).sym} ${total}`
     );
+  } else {
+    alert("No se seleccionó una moneda. Acción cancelada.");
   }
 }
 
@@ -110,8 +115,14 @@ function agregarGasto() {
       if (importe !== null) {
         gastos.push({ detalle, monedaId, importe });
         alert("Gasto agregado correctamente.");
+      } else {
+        alert("No se ingresó el importe. Acción cancelada.");
       }
+    } else {
+      alert("No se seleccionó una moneda. Acción cancelada.");
     }
+  } else {
+    alert("No se ingresó el detalle del gasto. Acción cancelada.");
   }
 }
 
@@ -138,6 +149,8 @@ function imprimirPresupuesto() {
         buscarMoneda(monedaIdDes).sym
       } ${presupuestoCal}`
     );
+  } else {
+    alert("No se seleccionó una moneda. Acción cancelada.");
   }
 }
 
