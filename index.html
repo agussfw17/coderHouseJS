@@ -1,26 +1,17 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Control de Gastos</title>
-  <link rel="stylesheet" href="./css/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
-  <main class="container">
-    <h1>Control de Gastos</h1>
-    <p>
-      Ingresá un presupuesto inicial y, en base a los gastos que vayas agregando, podés hacer lo siguiente:
-    </p>
-    <ol class="menu-opciones">
-      <li>Cambiar presupuesto inicial</li>
-      <li>Agregar gasto</li>
-      <li>Calcular presupuesto aplicando gastos</li>
-      <li>Calcular total gastado</li>
-      <li>Imprimir gastos</li>
-      <li>Salir</li>
-    </ol>
-  </main>
-  <script src="./js/script.js"></script>
+    <div class="campo-presupuesto">
+        <label for="presupuesto">Ingresa tu presupuesto</label>
+        <input type="text" id="presupuesto"/>
+        <button>Agregar</button>
+    </div>
 </body>
+<script src="/js/home.js"></script>
 </html>
