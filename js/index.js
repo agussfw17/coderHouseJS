@@ -4,6 +4,7 @@ const bpresupuesto = document.querySelector('#b-cambiar-p');
 const importe = document.querySelector('#num-importe');
 const selectMoneda = document.querySelector('#select-moneda');
 const lpresupuesto = document.querySelector('#lpresupuesto');
+const infoPresupuesto = document.querySelector('.info-presupuesto');
 const newPresupuesto = document.querySelector('.new-presupuesto');
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -19,12 +20,14 @@ function confirmarPresupuesto() {
         localStorage.setItem('presupuesto',JSON.stringify(presupuesto));
         bpresupuesto.textContent = 'Cambiar';
         lpresupuesto.textContent = `Presupuesto inicial: ${encontrarMoneda(parseInt(selectMoneda.value)).sym} ${importe.value}`; 
+        infoPresupuesto.style.display = 'block'
         newPresupuesto.style.display = 'none';
     }
 }
 
 function cambiarPresupuesto(){
     bpresupuesto.textContent = 'Confirmar';
+    infoPresupuesto.style.display = 'none'
     newPresupuesto.style.display = 'block';
 }
 

@@ -16,15 +16,15 @@ body {
 
 /* Contenedor principal */
 .controlador-general {
-  max-width: 800px;
-  width: 100%;
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 2rem;
+  width: 100%;
+  max-width: 900px;
 }
 
-/* Info general: contiene presupuesto + saldo */
+/* Info general: presupuesto + saldo */
 .info-general {
   display: flex;
   flex-direction: row;
@@ -33,49 +33,58 @@ body {
   flex-wrap: wrap;
 }
 
-/* Tarjetas de información */
-.presupuesto-general, .info-saldo {
+/* Tarjetas */
+.presupuesto-general,
+.info-saldo {
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   padding: 1.5rem;
   flex: 1;
-  min-width: 320px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-width: 280px;
 }
 
-/* Info presupuesto: fila */
-.info-presupuesto label {
+/* Texto del presupuesto */
+.info-presupuesto label,
+.info-saldo label {
   font-size: 1.1rem;
   font-weight: 500;
 }
 
-/* Parte editable */
+/* Campo editable */
 .new-presupuesto {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 1rem;
 }
 
-.campo-moneda {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.9rem;
-}
-
-select, input[type="text"] {
-  padding: 0.5rem;
+/* Select + input unidos visualmente */
+#select-moneda {
+  border-radius: 8px 0 0 8px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-right: none;
+  height: 40px;
   font-size: 1rem;
+  padding: 0 0.75rem;
+  min-width: 100px;
+  max-width: 300px;
+}
+
+#num-importe {
+  border-radius: 0 8px 8px 0;
+  border: 1px solid #ccc;
+  border-left: none;
+  height: 40px;
+  font-size: 1rem;
+  padding: 0 0.75rem;
   min-width: 100px;
 }
 
-/* Botón estilo moderno */
+/* Botón moderno */
 .boton {
   padding: 0.6rem 1.2rem;
   background-color: #007bff;
@@ -86,14 +95,9 @@ select, input[type="text"] {
   cursor: pointer;
   transition: background-color 0.3s ease;
   white-space: nowrap;
+  align-self: flex-start;
 }
 
 .boton:hover {
   background-color: #0056b3;
-}
-
-/* Info de saldo */
-.info-saldo label {
-  font-size: 1.1rem;
-  font-weight: 500;
 }
