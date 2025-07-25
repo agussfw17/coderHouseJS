@@ -1,9 +1,3 @@
-export const monedas = [
-  { id: 1, sym: "$", nombre: "Pesos", cotizacion: 1 },
-  { id: 2, sym: "U$S", nombre: "Dólares", cotizacion: 41.2 },
-  { id: 3, sym: "€", nombre: "Euros", cotizacion: 45.8 },
-];
-
 export function redondear(num) {
   return parseFloat(num.toFixed(2));
 }
@@ -19,6 +13,14 @@ export function agregarEventoPorId(filtro,fn,event) {
   });
 }
 
-export function encontrarMoneda(id){
-  return monedas.find(moneda => moneda.id === id);
+export function mostrarError(mensaje,id) {
+  const contError = document.querySelector(id);
+  contError.textContent = mensaje;
+  contError.style.display = 'block';
+}
+
+export function ocultarError(id) {
+  const contError = document.querySelector(id);
+  contError.textContent = '';
+  contError.style.display = 'none';
 }

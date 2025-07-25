@@ -4,28 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link rel="stylesheet" href="./css/style.css" />
+    <link rel="stylesheet" href="./css/style.css"/>
 </head>
 <body>
-    <div class="controlador-general">
-        <div class="info-general">
-            <div class="presupuesto-general">
-                <div class="info-presupuesto">
-                    <label id="lpresupuesto">Presupuesto inicial: $0</label>
-                </div>
-                <div class="new-presupuesto">
-                    <select id="select-moneda"></select>
-                    <input type="text" id="num-importe"/>
-                </div>
-                <button id="b-cambiar-p" class="boton">Cambiar</button>
-            </div>
+<body>
+<!--   <nav class="menu">
+    <span>🏠 Inicio</span>
+    <span>➕ Agregar gasto</span>
+    <span>📄 Ver gastos</span>
+    <span>📊 Análisis</span>
+    <span>⚙️ Ajustes</span>
+  </nav> -->
 
-
-            <div class="info-saldo">
-                <label id="isaldo">Saldo restante:</label>
-            </div>
-        </div>
+  <div class="controlador-cuenta">
+    <div class="info-cuenta">
+      <div class="card">
+        <h3>💳 Saldo:</h3>
+        <h2 id="saldo">$0</h2>
+      </div>
+      <div class="card">
+        <h3>💵 Gasto total:</h3>
+        <h2 id="gastosTotal">$0</h2>
+      </div>
     </div>
+
+    <div class="agregar-gasto">
+      <h3>Agregar gasto</h3>
+      <div id="error-gasto" class="error-mensaje" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <div class="gastos-grid">
+        <input id='descripcion' type="text" placeholder="Descripción"/>
+        <select id="select-moneda"></select>
+        <input id='num-gasto' type="text" placeholder="Importe"/>
+        <input id='fch' type="date"/>
+      </div>
+      <button id="agregarGasto">Agregar gasto</button>
+    </div>
+
+    <div class="gastos-table">
+      <h3>Lista de gastos</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Importe</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="lista-gastos">
+          <!-- Aquí se agregan los gastos dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 </body>
 <script type="module" src="/js/monedas.js"></script>
 <script type="module" src="/js/index.js"></script>
