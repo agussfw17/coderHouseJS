@@ -8,10 +8,6 @@ export function redondear(num) {
   return parseFloat(num.toFixed(2));
 }
 
-export function validarNumero(valor) {
-  return !isNaN(valor) && parseFloat(valor) > 0;
-}
-
 export function soloNumero() {
   this.value = this.value.replace(/\D/g, "");
 }
@@ -21,4 +17,8 @@ export function agregarEventoPorId(filtro,fn,event) {
   elementos.forEach(elemento => {
     elemento.addEventListener(event,fn);
   });
+}
+
+export function encontrarMoneda(id){
+  return monedas.find(moneda => moneda.id === id);
 }

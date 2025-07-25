@@ -7,15 +7,29 @@
     <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
-    <div class="campo-importe">
-        <label for="importe">Ingresa tu presupuesto</label>
-        <input type="text" id="num-importe"/>
-        <button id="button-presupuesto" class="boton">Agregar</button>
-    </div>
-    <div class="campo-moneda">
-        <label for="select-moneda">Moneda:</label>
-        <select id="select-moneda"></select>
+    <div class="controlador-general">
+        <div class="info-general">
+            <div class="presupuesto-general">
+                <div class="info-presupuesto">
+                    <label id="lpresupuesto">Presupuesto inicial: $0</label>
+                </div>
+                <div class="new-presupuesto">
+                    <div class="campo-moneda">
+                        <label for="select-moneda">Moneda:</label>
+                        <select id="select-moneda"></select>
+                    </div>
+                    <input type="text" id="num-importe"/>
+                </div>
+                <button id="b-cambiar-p" class="boton">Cambiar</button>
+            </div>
+
+
+            <div class="info-saldo">
+                <label id="isaldo">Saldo restante:</label>
+            </div>
+        </div>
     </div>
 </body>
+<script type="module" src="/js/monedas.js"></script>
 <script type="module" src="/js/index.js"></script>
 </html>
