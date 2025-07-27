@@ -1,63 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-    <link rel="stylesheet" href="./css/style.css"/>
-</head>
-<body>
-<body>
-<!--   <nav class="menu">
-    <span>🏠 Inicio</span>
-    <span>➕ Agregar gasto</span>
-    <span>📄 Ver gastos</span>
-    <span>📊 Análisis</span>
-    <span>⚙️ Ajustes</span>
-  </nav> -->
-
-  <div class="controlador-cuenta">
-    <div class="info-cuenta">
-      <div class="card">
-        <h3>💳 Saldo:</h3>
-        <h2 id="saldo">$0</h2>
+    <link rel="stylesheet" href="./css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="controlador-cuenta">
+      <div class="info-cuenta">
+        <div id="show-saldo" class="card">
+          <h3><i class="fa-solid fa-credit-card"></i> Saldo inicial:</h3>
+          <div class="fila-saldo">
+            <h2 id="saldo">$0</h2>
+            <button class="boton" id="modificarSaldo">Modificar</button>
+          </div>
+        </div>
+        <div id="edit-saldo" class="card">
+          <h3><i class="fa-solid fa-credit-card"></i> Saldo inicial:</h3>
+          <div id="error-saldo" class="error-mensaje"></div>
+          <div class="fila-saldo">
+            <div class="moneda-importe">
+              <select class="select-moneda" id="select-moneda-s"></select>
+              <input id="num-saldo" type="text" placeholder="Importe" />
+            </div>
+            <button class="boton" id="confirmarSaldo">Confirmar</button>
+          </div>
+        </div>
+        <div id="show-saldo-restante" class="card">
+          <h3><i class="fas fa-money-bill-wave"></i> Saldo restante:</h3>
+          <div class="fila-saldo">
+            <h2 id="saldoRestante">$0</h2>
+            <button class="boton" id="modificarSaldoRestante">Cambiar moneda</button>
+          </div>
+        </div>
+        <div id="edit-saldo-restante" class="card">
+          <h3><i class="fas fa-money-bill-wave"></i> Saldo restante:</h3>
+          <div class="fila-saldo">
+            <select class="select-moneda" id="select-moneda-sr"></select>
+            <button class="boton" id="confirmarSaldoRestante">Confirmar</button>
+          </div>
+        </div>
+        <div id="show-gasto" class="card">
+          <h3><i class="fas fa-money-bill-wave"></i> Gasto total:</h3>
+          <div class="fila-saldo">
+            <h2 id="gastosTotal">$0</h2>
+            <button class="boton" id="modificarGasto">Cambiar moneda</button>
+          </div>
+        </div>
+        <div id="edit-gasto" class="card">
+          <h3><i class="fas fa-money-bill-wave"></i> Gasto total:</h3>
+          <div class="fila-saldo">
+            <select class="select-moneda" id="select-moneda-gs"></select>
+            <button class="boton" id="confirmarGasto">Confirmar</button>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <h3>💵 Gasto total:</h3>
-        <h2 id="gastosTotal">$0</h2>
+
+      <div class="agregar-gasto">
+        <h3>Agregar gasto</h3>
+        <div id="error-gasto" class="error-mensaje"></div>
+        <div class="gastos-grid">
+          <input id="descripcion" type="text" placeholder="Descripción" />
+          <div class="moneda-importe">
+            <select class="select-moneda" id="select-moneda-g"></select>
+            <input id="num-gasto" type="text" placeholder="Importe" />
+          </div>
+          <input id="fch" type="date" />
+        </div>
+        <button class="boton" id="agregarGasto">Agregar gasto</button>
+      </div>
+
+      <div class="gastos-table">
+        <h3>Lista de gastos</h3>
+        <div class="filtros">
+          <input type="text" id="busqueda-descripcion" placeholder="Buscar por descripción">
+          <div class="filtros-fecha">
+            <div class="campo-fecha">
+              <label for="filtro-fecha-desde">Fecha desde:</label>
+              <input type="date" id="filtro-fecha-desde" />
+            </div>
+            <div class="campo-fecha">
+              <label for="filtro-fecha-hasta">Fecha hasta:</label>
+              <input type="date" id="filtro-fecha-hasta" />
+            </div>
+          </div>
+        </div>
+        <table>                                                         
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Importe</th>
+              <th>Fecha</th>
+              <th>
+                <select id="orden-gastos">
+                  <option value="fecha-asc">Fecha ↑</option>
+                  <option value="fecha-desc">Fecha ↓</option>
+                  <option value="importe-asc">Importe ↑</option>
+                  <option value="importe-desc">Importe ↓</option>
+              </select>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="lista-gastos">
+            <!-- Aca se agregan los gastos dinámicamente -->
+          </tbody>
+        </table>
       </div>
     </div>
-
-    <div class="agregar-gasto">
-      <h3>Agregar gasto</h3>
-      <div id="error-gasto" class="error-mensaje" style="color: red; margin-bottom: 10px; display: none;"></div>
-      <div class="gastos-grid">
-        <input id='descripcion' type="text" placeholder="Descripción"/>
-        <select id="select-moneda"></select>
-        <input id='num-gasto' type="text" placeholder="Importe"/>
-        <input id='fch' type="date"/>
-      </div>
-      <button id="agregarGasto">Agregar gasto</button>
-    </div>
-
-    <div class="gastos-table">
-      <h3>Lista de gastos</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Descripción</th>
-            <th>Importe</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="lista-gastos">
-          <!-- Aquí se agregan los gastos dinámicamente -->
-        </tbody>
-      </table>
-    </div>
-  </div>
-</body>
-<script type="module" src="/js/monedas.js"></script>
-<script type="module" src="/js/index.js"></script>
+  </body>
+  <script type="module" src="/js/monedas.js"></script>
+  <script type="module" src="/js/index.js"></script>
 </html>

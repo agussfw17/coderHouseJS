@@ -1,5 +1,6 @@
 export function redondear(num) {
-  return parseFloat(num.toFixed(2));
+  const numero = parseFloat(num);
+  return parseFloat(numero.toFixed(1));
 }
 
 export function soloNumero() {
@@ -23,4 +24,9 @@ export function ocultarError(id) {
   const contError = document.querySelector(id);
   contError.textContent = '';
   contError.style.display = 'none';
+}
+
+export function formatearFecha(fechaStr) {
+    const [a, m, d] = fechaStr.split("-");
+    return `${d}/${m}/${a}`;
 }

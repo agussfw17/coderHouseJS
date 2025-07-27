@@ -16,11 +16,13 @@ export function convertirAMoneda(monedaIdOri, monedaIdDes, importe) {
   return redondear((importe * monedaOri.cotizacion) / monedaDes.cotizacion);
 }
 
-const selectMoneda = document.querySelector('#select-moneda');
+const selectsMoneda = document.querySelectorAll('.select-moneda');
 
-monedas.forEach(moneda => {
-  const option = document.createElement('option');
-  option.value = moneda.id;
-  option.textContent = `${moneda.sym}`;
-  selectMoneda.appendChild(option);
+selectsMoneda.forEach(selectMoneda => {
+  monedas.forEach(moneda => {
+    const option = document.createElement('option');
+    option.value = moneda.id;
+    option.textContent = `${moneda.sym}`;
+    selectMoneda.appendChild(option);
+  });
 });

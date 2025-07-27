@@ -1,5 +1,6 @@
     * {
       box-sizing: border-box;
+      border-radius: 5px;
     }
 
     body {
@@ -9,25 +10,8 @@
       color: #222;
     }
 
-    .menu {
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .navbar button, .navbar select {
-      background: transparent;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
     .controlador-cuenta {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 30px auto;
       padding: 0 20px;
     }
@@ -44,7 +28,7 @@
       background: #fff;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: 0 10px 10px rgba(0,0,0,0.05);
       flex: 1;
       min-width: 250px;
     }
@@ -83,13 +67,13 @@
 
     input, select {
       padding: 10px;
-      border: 1px solid #ccc;
+      border: 1px solid #000;
       border-radius: 6px;
       width: 100%;
       font-size: 14px;
     }
 
-    .agregar-gasto button {
+    .boton {
       background: #2563eb;
       color: #fff;
       padding: 10px 16px;
@@ -126,19 +110,125 @@
       font-weight: 600;
     }
 
-    @media (max-width: 600px) {
-      .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .info-cuenta {
-        flex-direction: column;
-      }
-    }
-
     .error-mensaje {
       color: red;
       font-weight: bold;
       margin-top: 5px;
+      margin-bottom: 10px;
     }
+
+    .moneda-importe {
+      display: flex;
+      align-items: center;
+    }
+
+    .moneda-importe select,
+    .moneda-importe input {
+      height: 40px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      padding: 8px;
+      margin: 0;
+    }
+
+    .moneda-importe select {
+      border: 1px solid #000;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      width: 65px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    .moneda-importe input {
+      border: 1px solid #000;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: none;
+      flex: 1;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    #num-gasto {
+      flex: 1;
+    }
+
+    .select-moneda {
+      width: 70px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    .fila-saldo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .fila-saldo h2 {
+      margin: 0;
+    }
+
+    #edit-saldo .moneda-importe {
+      flex: 1;
+    }
+
+    .btn-eliminar {
+      background-color: transparent; 
+      border: none;                  
+      padding: 0;                    
+      cursor: pointer;              
+      color: inherit;              
+    }
+
+    .filtros {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    #busqueda-descripcion {
+      flex-grow: 1;
+      min-width: 200px;
+      max-width: 400px;
+    }
+
+    .filtros-fecha {
+      display: flex;
+      gap: 15px; 
+      flex-wrap: nowrap; 
+    }
+
+    .campo-fecha {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 140px;
+      min-width: 140px;
+      max-width: 160px;
+    }
+
+    .campo-fecha label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .campo-fecha input {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+  
+
+ 
