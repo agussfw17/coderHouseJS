@@ -1,10 +1,6 @@
 import {  agregarEventoPorId, soloNumero, mostrarError, ocultarError, redondear, formatearFecha } from './utils.js';
 import { monedas, buscarMoneda, convertirAMoneda} from './monedas.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    agregarEventoPorId('input[id*="num"]', soloNumero, 'input');
-});
-
 function calcularGastoTotal(){
     const gastos = JSON.parse(localStorage.getItem('gastos')) || [];
 
@@ -48,15 +44,10 @@ function calcularSaldoRestante(){
     return saldoRestante; 
 }
 
-function eliminarGasto(index) {
+function eliminarGasto(id) {
+    console.log('id',id)
     let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
-    const gasto = gastos[index];
-
-    if (!gasto){
-        return;
-    }
-    
-    gastos.splice(index, 1);
+    gastos = gastos.filter(gasto => gasto.id !== id);
     localStorage.setItem("gastos", JSON.stringify(gastos));
     renderizarListaDeGastos();
 
@@ -98,14 +89,17 @@ function agregarGasto(){
     }
 
     ocultarError('#error-gasto');
-
-    let gasto = {
-       descripcion: descripcion,
-       monedaId: parseInt(monedaId),
-       importe: redondear(importe),
-       fecha: fecha
-    }
+   
     const gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+
+    /*Agrego id con UUID para poder eliminarlos al aplica filtros o sorts*/
+    let gasto = {
+        id: crypto.randomUUID(),
+        descripcion: descripcion,
+        monedaId: parseInt(monedaId),
+        importe: redondear(importe),
+        fecha: fecha
+    }
     gastos.push(gasto);
     localStorage.setItem('gastos',JSON.stringify(gastos));
 
@@ -118,7 +112,7 @@ function agregarGasto(){
     document.querySelector('#saldoRestante').textContent = `${buscarMoneda(parseInt(saldoRestante.monedaId)).sym} ${saldoRestante.importe}`; 
 }
 
-function agregarFilaAGastos(gasto, index){
+function agregarFilaAGastos(gasto){
     const tbody = document.querySelector("#lista-gastos");
 
     const fila = document.createElement("tr");
@@ -127,13 +121,12 @@ function agregarFilaAGastos(gasto, index){
         <td>${gasto.descripcion}</td>
         <td>${buscarMoneda(gasto.monedaId).sym} ${gasto.importe}</td>
         <td>${formatearFecha(gasto.fecha)}</td>
-        <td><button class="btn-eliminar" data-index="${index}"><i class="fa-solid fa-trash-can"></i></button></td>
+        <td><button class="btn-eliminar" data-index="${gasto.id}"><i class="fa-solid fa-trash-can"></i></button></td>
     `;
 
     const botonEliminar = fila.querySelector(".btn-eliminar");
     botonEliminar.addEventListener("click", (event) => {
-        const index = parseInt(event.currentTarget.dataset.index);
-        eliminarGasto(index);
+        eliminarGasto(gasto.id);
     });
 
     tbody.appendChild(fila);
@@ -143,16 +136,12 @@ function renderizarListaDeGastos(){
     const tbody = document.querySelector("#lista-gastos");
     tbody.innerHTML = ''; 
     
-    let gastos = JSON.parse(localStorage.getItem("gastos"));
-    console.log('gastos',gastos);
-    gastos = gastos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    console.log('gastossort',gastos);
-    
-    if (gastos){
-        gastos.forEach((gasto, index) => {
-            agregarFilaAGastos(gasto, index);
-        });
-    }
+    let gastos = filtrarGastos();
+    gastos = sortGastos(gastos);
+
+    gastos.forEach((gasto) => {
+        agregarFilaAGastos(gasto);
+    });
 }
 
 function modificarSaldo(){
@@ -235,18 +224,67 @@ function confirmarGasto(){
     document.querySelector('#gastosTotal').textContent = `${buscarMoneda(gastosTotal.monedaId).sym} ${gastosTotal.importe}`; 
 }
 
+function sortGastos(gastos) {
+    const orden = document.querySelector('#orden-gastos').value;
+    switch (orden) {
+        case 'fecha-asc':
+            gastos.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+            break;
+        
+        case 'fecha-desc':
+            gastos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            break;
+
+        case 'importe-asc':
+            gastos.sort((a, b) => convertirAMoneda(a.monedaId,1,a.importe) - convertirAMoneda(b.monedaId,1,b.importe));
+            break;
+
+        case 'importe-desc':
+            gastos.sort((a, b) => convertirAMoneda(b.monedaId,1,b.importe) - convertirAMoneda(a.monedaId,1,a.importe));
+            break;
+    }
+    return gastos;
+}
+
+function filtrarGastos(){
+    const dsc = document.querySelector('#busqueda-descripcion').value
+    const fchDesde = document.querySelector('#filtro-fecha-desde').value
+    const fchHasta = document.querySelector('#filtro-fecha-hasta').value
+
+    let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+   
+    if (dsc){
+        gastos = gastos.filter((gasto) => gasto.descripcion.toLowerCase().includes(dsc.toLowerCase()));
+    }
+
+    if (fchDesde){
+        gastos = gastos.filter((gasto) => new Date(gasto.fecha) >= new Date(fchDesde));
+    }
+
+    if (fchHasta){
+        gastos = gastos.filter((gasto) => new Date(gasto.fecha) <= new Date(fchHasta));
+    }
+    return gastos;
+}
+
 function renderizarPantalla(){
     document.querySelector('#edit-saldo').style.display = 'none';
     document.querySelector('#edit-saldo-restante').style.display = 'none';
     document.querySelector('#edit-gasto').style.display = 'none';
 
-    document.querySelector('#modificarSaldo').addEventListener('click',modificarSaldo);
-    document.querySelector('#confirmarSaldo').addEventListener('click',confirmarSaldo);
-    document.querySelector('#agregarGasto').addEventListener('click',agregarGasto);
-    document.querySelector('#modificarSaldoRestante').addEventListener('click',modificarSaldoRestante);
-    document.querySelector('#confirmarSaldoRestante').addEventListener('click',confirmarSaldoRestante);
-    document.querySelector('#modificarGasto').addEventListener('click',modificarGasto);
-    document.querySelector('#confirmarGasto').addEventListener('click',confirmarGasto);
+    document.addEventListener('DOMContentLoaded', () => {
+        agregarEventoPorId('input[id*="num"]', soloNumero, 'input');
+        document.querySelector('#modificarSaldo').addEventListener('click',modificarSaldo);
+        document.querySelector('#confirmarSaldo').addEventListener('click',confirmarSaldo);
+        document.querySelector('#agregarGasto').addEventListener('click',agregarGasto);
+        document.querySelector('#modificarSaldoRestante').addEventListener('click',modificarSaldoRestante);
+        document.querySelector('#confirmarSaldoRestante').addEventListener('click',confirmarSaldoRestante);
+        document.querySelector('#modificarGasto').addEventListener('click',modificarGasto);
+        document.querySelector('#confirmarGasto').addEventListener('click',confirmarGasto);
+        document.querySelector('#busqueda-descripcion').addEventListener('input',renderizarListaDeGastos);
+        agregarEventoPorId('input[id*="filtro-fecha"], select[id="orden-gastos"]', renderizarListaDeGastos, 'change');
+    });
+
 
     const saldo = JSON.parse(localStorage.getItem('saldo'));
     if (saldo){
