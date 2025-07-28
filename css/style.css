@@ -28,9 +28,14 @@
       background: #fff;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 10px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       flex: 1;
+      transition: box-shadow 0.2s;
       min-width: 250px;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     }
 
     .card h3 {
@@ -81,6 +86,12 @@
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .boton:hover {
+      background-color: #1d4ed8;
+      transform: translateY(-1px);
     }
 
     .gastos-table {
@@ -96,6 +107,24 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      border-spacing: 0 10px
+    }
+
+    thead tr {
+      background-color: #f0f4f8;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    tbody tr {
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+      transition: background 0.2s ease-in-out;
+    }
+
+    tbody tr:hover {
+      background-color: #f9fafb;
     }
 
     th, td {
@@ -181,7 +210,11 @@
       border: none;                  
       padding: 0;                    
       cursor: pointer;              
-      color: inherit;              
+      color:inherit;              
+    }
+
+    .btn-eliminar:hover {
+      color: #b91c1c;
     }
 
     .filtros {
@@ -227,6 +260,10 @@
       margin: 0;
       width: 100%;
       box-sizing: border-box;
+    }
+
+    #orden-gastos{
+      width: 100px;
     }
 
   
