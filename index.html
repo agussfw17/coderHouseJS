@@ -9,6 +9,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <div class="controlador-cuenta">
@@ -22,7 +26,6 @@
         </div>
         <div id="edit-saldo" class="card">
           <h3><i class="fa-solid fa-credit-card"></i> Saldo inicial:</h3>
-          <div id="error-saldo" class="error-mensaje"></div>
           <div class="fila-saldo">
             <div class="moneda-importe">
               <select class="select-moneda" id="select-moneda-s"></select>
@@ -63,9 +66,9 @@
 
       <div class="agregar-gasto">
         <h3>Agregar gasto</h3>
-        <div id="error-gasto" class="error-mensaje"></div>
         <div class="gastos-grid">
           <input id="descripcion" type="text" placeholder="Descripción" />
+          <select class="select-categoria" id="select-categoria-g"></select>
           <div class="moneda-importe">
             <select class="select-moneda" id="select-moneda-g"></select>
             <input id="num-gasto" type="text" placeholder="Importe" />
@@ -95,6 +98,7 @@
             <tr>
               <th>Descripción</th>
               <th>Importe</th>
+              <th>Categoria</th>
               <th>Fecha</th>
               <th>
                 <select id="orden-gastos">
@@ -110,6 +114,11 @@
             <!-- Aca se agregan los gastos dinámicamente -->
           </tbody>
         </table>
+
+        <div class="grafica-gastos">
+          <h3>Gasto por categoría</h3>
+          <canvas id="graficaCategorias"></canvas>
+        </div>
       </div>
     </div>
   </body>

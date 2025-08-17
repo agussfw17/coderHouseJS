@@ -14,16 +14,24 @@ export function agregarEventoPorId(filtro,fn,event) {
   });
 }
 
-export function mostrarError(mensaje,id) {
-  const contError = document.querySelector(id);
-  contError.textContent = mensaje;
-  contError.style.display = 'block';
+export function mostrarSuccess(mensaje) {
+  Toastify({
+    text: mensaje,
+    duration: 2000,
+    gravity: "top",
+    position: "center",
+    backgroundColor: "#4CAF50",
+  }).showToast();
 }
 
-export function ocultarError(id) {
-  const contError = document.querySelector(id);
-  contError.textContent = '';
-  contError.style.display = 'none';
+export function mostrarError(mensaje) {
+  Toastify({
+    text: mensaje,
+    duration: 3000,
+    gravity: "top",
+    position: "center",
+    backgroundColor: "#dc3545",
+  }).showToast();
 }
 
 export function formatearFecha(fechaStr) {

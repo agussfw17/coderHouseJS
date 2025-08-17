@@ -1,5 +1,8 @@
-import {  agregarEventoPorId, soloNumero, mostrarError, ocultarError, redondear, formatearFecha } from './utils.js';
-import { monedas, buscarMoneda, convertirAMoneda} from './monedas.js';
+import {  agregarEventoPorId, soloNumero, mostrarError, mostrarSuccess, redondear, formatearFecha } from './utils.js';
+import { getMonedasApi, getMonedas, buscarMoneda, convertirAMoneda} from './monedas.js';
+
+let categorias = [];
+let chart = null;
 
 function calcularGastoTotal(){
     const gastos = JSON.parse(localStorage.getItem('gastos')) || [];
@@ -60,42 +63,51 @@ function eliminarGasto(id) {
 
 function agregarGasto(){
     let descripcion = document.querySelector('#descripcion').value;
+    let categoriaId = parseInt(document.querySelector('#select-categoria-g').value);
     let monedaId = parseInt(document.querySelector('#select-moneda-g').value);
     let importe = parseFloat(document.querySelector('#num-gasto').value);
     let fecha = document.querySelector('#fch').value;
 
+    console.log('cat',categoriaId)
+
     if (!descripcion) {
-        mostrarError('Por favor ingresa una descripción','#error-gasto');
+        mostrarError('Por favor ingresa una descripción');
+        return;
+    }
+
+    if (!categoriaId) {
+        mostrarError('Por favor ingresa una categoria');
         return;
     }
 
     if (!monedaId) {
-        mostrarError('Por favor selecciona una moneda','#error-gasto');
+        mostrarError('Por favor selecciona una moneda');
         return;
     }
 
     let saldoRestante = calcularSaldoRestante();
     if (!importe || isNaN(importe) || Number(importe) <= 0) {
-        mostrarError('Por favor ingresa un importe válido mayor a 0','#error-gasto');
+        mostrarError('Por favor ingresa un importe válido mayor a 0');
         return;
     }else if (importe > redondear(convertirAMoneda(saldoRestante.monedaId,monedaId,saldoRestante.importe))) {
-        mostrarError('El importe supera el saldo restante','#error-gasto');
+        mostrarError('El importe supera el saldo restante');
         return;
     }
 
     if (!fecha) {
-        mostrarError('Por favor ingresa una fecha','#error-gasto');
+        mostrarError('Por favor ingresa una fecha');
         return;
     }
 
-    ocultarError('#error-gasto');
-   
+    mostrarSuccess('Gasto agregado');
+
     const gastos = JSON.parse(localStorage.getItem('gastos')) || [];
 
     /*Agrego id con UUID para poder eliminarlos al aplica filtros o sorts*/
     let gasto = {
         id: crypto.randomUUID(),
         descripcion: descripcion,
+        categoriaId: parseInt(categoriaId),
         monedaId: parseInt(monedaId),
         importe: redondear(importe),
         fecha: fecha
@@ -120,6 +132,7 @@ function agregarFilaAGastos(gasto){
     fila.innerHTML = `
         <td>${gasto.descripcion}</td>
         <td>${buscarMoneda(gasto.monedaId).sym} ${gasto.importe}</td>
+        <td>${buscarCategoria(gasto.categoriaId).name}</td>
         <td>${formatearFecha(gasto.fecha)}</td>
         <td><button class="btn-eliminar" data-index="${gasto.id}"><i class="fa-solid fa-trash-can"></i></button></td>
     `;
@@ -157,21 +170,19 @@ function confirmarSaldo(){
     let importe = redondear(document.querySelector('#num-saldo').value);
 
     if (!monedaId){
-        mostrarError('Debe seleccionar una moneda','#error-saldo');
+        mostrarError('Debe seleccionar una moneda');
         return;
     }
 
     let gastosTotal = calcularGastoTotal();
     gastosTotal.importe = redondear(convertirAMoneda(gastosTotal.monedaId,monedaId,gastosTotal.importe));
     if (!importe){
-        mostrarError('Debe ingresar una importe mayor a 0','#error-saldo');
+        mostrarError('Debe ingresar una importe mayor a 0');
         return;
     }else if (importe < gastosTotal.importe){
-        mostrarError('El saldo ingresado no puede ser menor al total de gastos','#error-saldo');
+        mostrarError('El saldo ingresado no puede ser menor al total de gastos');
         return;   
     }
-
-    ocultarError('#error-saldo');
 
     const saldo = {
         monedaId: monedaId,
@@ -267,24 +278,79 @@ function filtrarGastos(){
     return gastos;
 }
 
-function renderizarPantalla(){
+async function getCategorias(){
+  try{
+    const res = await axios.get("https://68a11c406f8c17b8f5d92857.mockapi.io/api/banco/category")
+    return res.data;
+  } catch (error){
+    mostrarError(error);
+  }
+}
+
+function buscarCategoria(id){
+    return categorias.find(categoria => categoria.id === id);
+}
+
+function calcularGastosPorCategoria() {
+  const gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+  
+  const gastosPorCategoria = {};
+
+  gastos.forEach(gasto => {
+    const catId = gasto.categoriaId;
+    const importeConvertido = redondear(convertirAMoneda(gasto.monedaId, 1, gasto.importe));
+    
+    if (!gastosPorCategoria[catId]) {
+      gastosPorCategoria[catId] = 0;
+    }
+    gastosPorCategoria[catId] += importeConvertido;
+  });
+
+  return gastosPorCategoria;
+}
+
+async function renderizarPantalla(){
+    await getMonedasApi();
+    const monedas = getMonedas();
+
+    const selectsMoneda = document.querySelectorAll('.select-moneda');
+
+    selectsMoneda.forEach(selectMoneda => {
+      monedas.forEach(moneda => {
+          const option = document.createElement('option');
+          option.value = moneda.id;
+          option.textContent = `${moneda.sym}`;
+          selectMoneda.appendChild(option);
+      });
+    });
+
+    categorias = await getCategorias();
+    
+    const selectsCategoria = document.querySelectorAll('.select-categoria');
+
+    selectsCategoria.forEach(selectCategoria => {
+      categorias.forEach(categoria => {
+          const option = document.createElement('option');
+          option.value = categoria.id;
+          option.textContent = `${categoria.name}`;
+          selectCategoria.appendChild(option);
+      });
+    });
+
     document.querySelector('#edit-saldo').style.display = 'none';
     document.querySelector('#edit-saldo-restante').style.display = 'none';
     document.querySelector('#edit-gasto').style.display = 'none';
 
-    document.addEventListener('DOMContentLoaded', () => {
-        agregarEventoPorId('input[id*="num"]', soloNumero, 'input');
-        document.querySelector('#modificarSaldo').addEventListener('click',modificarSaldo);
-        document.querySelector('#confirmarSaldo').addEventListener('click',confirmarSaldo);
-        document.querySelector('#agregarGasto').addEventListener('click',agregarGasto);
-        document.querySelector('#modificarSaldoRestante').addEventListener('click',modificarSaldoRestante);
-        document.querySelector('#confirmarSaldoRestante').addEventListener('click',confirmarSaldoRestante);
-        document.querySelector('#modificarGasto').addEventListener('click',modificarGasto);
-        document.querySelector('#confirmarGasto').addEventListener('click',confirmarGasto);
-        document.querySelector('#busqueda-descripcion').addEventListener('input',renderizarListaDeGastos);
-        agregarEventoPorId('input[id*="filtro-fecha"], select[id="orden-gastos"]', renderizarListaDeGastos, 'change');
-    });
-
+    agregarEventoPorId('input[id*="num"]', soloNumero, 'input');
+    document.querySelector('#modificarSaldo').addEventListener('click',modificarSaldo);
+    document.querySelector('#confirmarSaldo').addEventListener('click',confirmarSaldo);
+    document.querySelector('#agregarGasto').addEventListener('click',agregarGasto);
+    document.querySelector('#modificarSaldoRestante').addEventListener('click',modificarSaldoRestante);
+    document.querySelector('#confirmarSaldoRestante').addEventListener('click',confirmarSaldoRestante);
+    document.querySelector('#modificarGasto').addEventListener('click',modificarGasto);
+    document.querySelector('#confirmarGasto').addEventListener('click',confirmarGasto);
+    document.querySelector('#busqueda-descripcion').addEventListener('input',renderizarListaDeGastos);
+    agregarEventoPorId('input[id*="filtro-fecha"], select[id="orden-gastos"]', renderizarListaDeGastos, 'change');
 
     const saldo = JSON.parse(localStorage.getItem('saldo'));
     if (saldo){
@@ -300,7 +366,9 @@ function renderizarPantalla(){
     renderizarListaDeGastos();
 }
 
-renderizarPantalla();
+document.addEventListener('DOMContentLoaded', () => {
+  renderizarPantalla();
+});
 
 
 
