@@ -48,7 +48,6 @@ function calcularSaldoRestante(){
 }
 
 function eliminarGasto(id) {
-    console.log('id',id)
     let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
     gastos = gastos.filter(gasto => gasto.id !== id);
     localStorage.setItem("gastos", JSON.stringify(gastos));
@@ -67,8 +66,6 @@ function agregarGasto(){
     let monedaId = parseInt(document.querySelector('#select-moneda-g').value);
     let importe = parseFloat(document.querySelector('#num-gasto').value);
     let fecha = document.querySelector('#fch').value;
-
-    console.log('cat',categoriaId)
 
     if (!descripcion) {
         mostrarError('Por favor ingresa una descripción');
@@ -155,6 +152,8 @@ function renderizarListaDeGastos(){
     gastos.forEach((gasto) => {
         agregarFilaAGastos(gasto);
     });
+
+    renderizarGraficaCategorias();
 }
 
 function modificarSaldo(){
@@ -291,22 +290,69 @@ function buscarCategoria(id){
     return categorias.find(categoria => categoria.id === id);
 }
 
-function calcularGastosPorCategoria() {
-  const gastos = JSON.parse(localStorage.getItem('gastos')) || [];
-  
-  const gastosPorCategoria = {};
+function renderizarGraficaCategorias() {
+    const monedaId = parseInt(document.querySelector('#select-moneda-grafica').value);
+    const gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+    const gastosPorCategoria = {};
 
-  gastos.forEach(gasto => {
-    const catId = gasto.categoriaId;
-    const importeConvertido = redondear(convertirAMoneda(gasto.monedaId, 1, gasto.importe));
-    
-    if (!gastosPorCategoria[catId]) {
-      gastosPorCategoria[catId] = 0;
+    if (!gastos || gastos.length <= 0){
+        document.querySelector('.grafica-gastos').style.display = 'none'
+        return
+    }else{
+        document.querySelector('.grafica-gastos').style.display = 'flex'
     }
-    gastosPorCategoria[catId] += importeConvertido;
-  });
 
-  return gastosPorCategoria;
+    gastos.forEach(gasto => {
+        const catId = gasto.categoriaId;
+        const importeConvertido = redondear(convertirAMoneda(gasto.monedaId, monedaId, gasto.importe));
+        if (!gastosPorCategoria[catId]) {
+            gastosPorCategoria[catId] = 0;
+        }
+        gastosPorCategoria[catId] = redondear(gastosPorCategoria[catId] + importeConvertido);
+    });
+
+    const labels = Object.keys(gastosPorCategoria).map(catId => {
+        const categoria = buscarCategoria(parseInt(catId));
+        return categoria.name;
+    });
+
+    const backgroundColors = Object.keys(gastosPorCategoria).map(catId => {
+        const categoria = buscarCategoria(parseInt(catId));
+        return categoria.colour;
+    });
+
+    const data = Object.values(gastosPorCategoria);
+
+    const ctx = document.getElementById('graficaCategorias').getContext('2d');
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Gasto por categoría (${buscarMoneda(monedaId).sym})`,
+                data: data,
+                backgroundColor: backgroundColors,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'right' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${buscarMoneda(monedaId).sym} ${context.parsed}`;
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 async function renderizarPantalla(){
@@ -351,7 +397,7 @@ async function renderizarPantalla(){
     document.querySelector('#confirmarGasto').addEventListener('click',confirmarGasto);
     document.querySelector('#busqueda-descripcion').addEventListener('input',renderizarListaDeGastos);
     agregarEventoPorId('input[id*="filtro-fecha"], select[id="orden-gastos"]', renderizarListaDeGastos, 'change');
-
+    document.querySelector('#select-moneda-grafica').addEventListener('change', renderizarGraficaCategorias);
     const saldo = JSON.parse(localStorage.getItem('saldo'));
     if (saldo){
         document.querySelector('#saldo').textContent = `${buscarMoneda(parseInt(saldo.monedaId)).sym} ${saldo.importe}`; 
